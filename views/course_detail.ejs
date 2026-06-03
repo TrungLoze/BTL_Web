@@ -1,0 +1,186 @@
+<%- include('layouts/header') %>
+    <link rel="stylesheet" href="/css/course_detail.css">
+
+    <div class="container py-4">
+        <!-- Breadcrumb / Nút quay lại -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-danger fw-bold">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Khóa học</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <%= course.title %>
+                </li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Khu vực chính bên trái: Intro hoặc Video Player -->
+            <div class="col-lg-8">
+
+                <!-- 1. INTRO CARD (Hiển thị ban đầu) -->
+                <div id="intro-content" class="card border-0 shadow-sm rounded-4 p-4 p-md-5 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-4 pb-4 border-bottom">
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-danger bg-opacity-10 text-danger fs-2"
+                            style="width: 60px; height: 60px;">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-2 text-uppercase fs-3">GIỚI THIỆU KHÓA HỌC <%= course.title %>
+                            </h2>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border">E-LEARNING</span>
+                                <span
+                                    class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">+5
+                                    SAO KHI HOÀN THÀNH</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <h5 class="fw-bold mb-3">Mô tả khóa học</h5>
+                        <p class="fs-5 text-muted mb-4">
+                            <%= course.description
+                                || 'Khóa học này sẽ giúp bạn làm chủ các kỹ năng cần thiết một cách nhanh chóng và hiệu quả.'
+                                %>
+                        </p>
+
+                        <h5 class="fw-bold mb-3">Bạn sẽ nhận được gì?</h5>
+                        <ul
+                            class="list-group list-group-flush border-start border-danger border-4 rounded-end-3 mb-5 shadow-sm">
+                            <li class="list-group-item bg-light border-0 py-3">1. Hoàn thành toàn bộ video bài giảng:
+                                +150 sao.</li>
+                            <li class="list-group-item bg-light border-0 py-3">2. Vượt qua các bài kiểm tra trắc nghiệm:
+                                +500 sao.</li>
+                            <li class="list-group-item bg-light border-0 py-3">3. Hoàn thành đồ án cuối khóa: +350 sao.
+                            </li>
+                        </ul>
+
+                        <button id="btn-start-course"
+                            class="btn btn-start-course px-4 py-3 rounded-pill fw-bold fs-5 w-100 w-md-auto">
+                            <i class="bi bi-play-circle-fill me-2"></i> Bắt đầu ngay khóa học
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. VIDEO PLAYER (Hiển thị khi bấm bài học) -->
+                <div id="video-content" class="card border-0 shadow-sm rounded-4 overflow-hidden"
+                    style="display: none;">
+                    <!-- Trình phát video (Tỉ lệ 16:9 Bootstrap) -->
+                    <div class="ratio ratio-16x9 video-player-wrapper bg-dark">
+                        <iframe id="main-video-player" src=""
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Thông tin bài đang phát -->
+                    <div
+                        class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                        <h4 id="now-playing-title" class="fw-bold mb-0 text-dark">Đang phát: Tên bài học</h4>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light border fw-bold text-secondary">
+                                <i class="bi bi-journal-text me-1"></i> Làm bài tập
+                            </button>
+                            <button
+                                class="btn btn-danger bg-opacity-10 text-danger border-danger border-opacity-25 fw-bold">
+                                Bài tiếp <i class="bi bi-skip-forward-fill ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Khu vực thanh bên phải: Danh sách bài học -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 20px;">
+                    <h5 class="fw-bold mb-4 pb-3 border-bottom border-2 border-light text-uppercase">Nội dung khóa học
+                    </h5>
+
+                    <!-- Danh sách bài học -->
+                    <ul class="lesson-list list-unstyled mb-0">
+                        <!-- Tạm thời Hardcode bài học mẫu, sau này sẽ lặp từ CSDL -->
+                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
+                            data-video="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                            <div class="lesson-index shadow-sm me-3 text-muted">1</div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Giới thiệu tổng quan</h6>
+                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 04:15</span>
+                            </div>
+                        </li>
+                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
+                            data-video="https://www.youtube.com/embed/3JZ_D3ELwOQ">
+                            <div class="lesson-index shadow-sm me-3 text-muted">2</div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Khởi tạo và thiết lập</h6>
+                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 06:20</span>
+                            </div>
+                        </li>
+                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
+                            data-video="https://www.youtube.com/embed/jNQXAC9IVRw">
+                            <div class="lesson-index shadow-sm me-3 text-muted">3</div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Hướng dẫn sử dụng cơ bản</h6>
+                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 08:10</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const introContent = document.getElementById('intro-content');
+            const videoContent = document.getElementById('video-content');
+            const videoPlayer = document.getElementById('main-video-player');
+            const nowPlayingTitle = document.getElementById('now-playing-title');
+            const btnStart = document.getElementById('btn-start-course');
+            const lessonItems = document.querySelectorAll('.lesson-item');
+
+            // Hàm phát video
+            function playVideo(videoUrl, lessonElement) {
+                // Đổi giao diện
+                introContent.style.display = 'none';
+                videoContent.style.display = 'block';
+
+                // Đổi link iframe
+                videoPlayer.src = videoUrl;
+
+                // Xóa active cũ, thêm active mới
+                const currentActive = document.querySelector('.lesson-item.active');
+                if (currentActive) currentActive.classList.remove('active', 'border-danger');
+
+                lessonElement.classList.add('active', 'border-danger');
+
+                // Cập nhật tiêu đề đang phát
+                const lessonTitle = lessonElement.querySelector('h6').innerText;
+                nowPlayingTitle.innerText = `Đang phát: ${lessonTitle}`;
+
+                // Cuộn màn hình đến video trên mobile
+                if (window.innerWidth < 992) {
+                    videoContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+
+            // Bắt đầu khóa học -> mở bài đầu tiên
+            btnStart.addEventListener('click', function () {
+                if (lessonItems.length > 0) {
+                    const firstLesson = lessonItems[0];
+                    const videoUrl = firstLesson.getAttribute('data-video');
+                    playVideo(videoUrl, firstLesson);
+                }
+            });
+
+            // Click vào từng bài học
+            lessonItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const videoUrl = this.getAttribute('data-video');
+                    playVideo(videoUrl, this);
+                });
+            });
+        });
+    </script>
+
+    <%- include('layouts/footer') %>
