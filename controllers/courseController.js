@@ -8,7 +8,7 @@ const courseController = {
     async getDashboard(req, res) {
         try {
             const courses = await Course.getAll();
-            res.render('course_dashboard', { courses });
+            res.render('courses/course_dashboard', { courses });
         } catch (error) {
             console.error(error);
             res.redirect('/');
@@ -42,7 +42,7 @@ const courseController = {
                 return lesson;
             });
 
-            res.render('course_detail', { 
+            res.render('courses/course_detail', { 
                 course: course,
                 lessons: lessons,
                 user: req.session.user || null 
@@ -55,7 +55,7 @@ const courseController = {
 
     // Hiển thị form tạo khóa học (chỉ dành cho Admin)
     getCreateCourse(req, res) {
-        res.render('course_create', { error: null });
+        res.render('courses/course_create', { error: null });
     },
 
     // Xử lý tạo khóa học mới
@@ -104,7 +104,7 @@ const courseController = {
             res.redirect(`/courses/${slug}`);
         } catch (error) {
             console.error(error);
-            res.render('course_create', { error: 'Đã có lỗi xảy ra khi tạo khóa học.' });
+            res.render('courses/course_create', { error: 'Đã có lỗi xảy ra khi tạo khóa học.' });
         }
     },
 
@@ -118,7 +118,7 @@ const courseController = {
                 return res.redirect('/courses/dashboard');
             }
 
-            res.render('course_edit', { course, error: null });
+            res.render('courses/course_edit', { course, error: null });
         } catch (error) {
             console.error(error);
             res.redirect('/courses/dashboard');
@@ -155,7 +155,7 @@ const courseController = {
         } catch (error) {
             console.error(error);
             const course = await Course.getBySlug(slug);
-            res.render('course_edit', { course, error: 'Đã có lỗi xảy ra khi cập nhật khóa học.' });
+            res.render('courses/course_edit', { course, error: 'Đã có lỗi xảy ra khi cập nhật khóa học.' });
         }
     },
 
@@ -175,7 +175,7 @@ const courseController = {
     async getRebin(req, res) {
         try {
             const courses = await Course.getDeleted();
-            res.render('course_rebin', { courses });
+            res.render('courses/course_rebin', { courses });
         } catch (error) {
             console.error(error);
             res.redirect('/courses/dashboard');

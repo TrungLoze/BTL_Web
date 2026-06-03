@@ -37,10 +37,15 @@ app.use(async (req, res, next) => {
 const homeRouter = require('./routes/home');
 const authRouter = require('./routes/auth'); // Import router xác thực
 const courseRouter = require('./routes/course');
+const userRouter = require('./routes/user');
+const profileRouter = require('./routes/profile');
+const { isAdmin, isLoggedIn } = require('./middlewares/authMiddleware');
 
 
 app.use('/auth', authRouter); // Các route /login, /register, /logout
 app.use('/courses', courseRouter); // Route động cho các trang khóa học
+app.use('/users', isAdmin, userRouter); // Quản lý người dùng
+app.use('/profile', isLoggedIn, profileRouter); // Quản lý hồ sơ cá nhân
 app.use('/', homeRouter);
 
 

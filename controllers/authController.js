@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const authController = {
     // Hiển thị trang đăng nhập
     async getLogin(req, res) {
-        res.render('login', { error: null });
+        res.render('auth/login', { error: null });
     },
 
     // Xử lý dữ liệu khi người dùng bấm nút Đăng nhập
@@ -15,13 +15,13 @@ const authController = {
             // 1. Tìm xem email này có tồn tại trong CSDL không
             const user = await User.findByEmail(email);
             if (!user) {
-                return res.render('login', { error: 'Email hoặc mật khẩu không đúng!' });
+                return res.render('auth/login', { error: 'Email hoặc mật khẩu không đúng!' });
             }
 
             // 2. So sánh mật khẩu người dùng nhập với mật khẩu đã mã hóa trong CSDL
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return res.render('login', { error: 'Email hoặc mật khẩu không đúng!' });
+                return res.render('auth/login', { error: 'Email hoặc mật khẩu không đúng!' });
             }
 
             // 3. Nếu đúng hết, lưu thông tin vào Session và chuyển hướng về Trang chủ
@@ -33,13 +33,13 @@ const authController = {
             res.redirect('/');
         } catch (error) {
             console.error(error);
-            res.render('login', { error: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
+            res.render('auth/login', { error: 'Có lỗi xảy ra, vui lòng thử lại sau.' });
         }
     },
 
     // Hiển thị trang đăng ký
     async getRegister(req, res) {
-        res.render('register', { error: null });
+        res.render('auth/register', { error: null });
     },
 
     // Xử lý dữ liệu khi người dùng bấm nút Đăng ký
@@ -49,13 +49,13 @@ const authController = {
         try {
             // 1. Kiểm tra mật khẩu nhập lại có khớp không
             if (password !== confirm_password) {
-                return res.render('register', { error: 'Mật khẩu nhập lại không khớp!' });
+                return res.render('auth/register', { error: 'Mật khẩu nhập lại không khớp!' });
             }
 
             // 2. Kiểm tra xem email đã có ai dùng chưa
             const existingUser = await User.findByEmail(email);
             if (existingUser) {
-                return res.render('register', { error: 'Email này đã được sử dụng!' });
+                return res.render('auth/register', { error: 'Email này đã được sử dụng!' });
             }
 
             // 3. Mã hóa mật khẩu (băm mật khẩu)
@@ -73,7 +73,7 @@ const authController = {
             res.redirect('/auth/login');
         } catch (error) {
             console.error(error);
-            res.render('register', { error: 'Có lỗi xảy ra trong quá trình đăng ký.' });
+            res.render('auth/register', { error: 'Có lỗi xảy ra trong quá trình đăng ký.' });
         }
     },
 

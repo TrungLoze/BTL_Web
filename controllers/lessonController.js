@@ -34,7 +34,7 @@ const lessonController = {
 
             const lessons = await Lesson.getAllByCourseId(course.id);
             
-            res.render('lesson_dashboard', {
+            res.render('lessons/lesson_dashboard', {
                 course,
                 lessons,
                 user: req.session.user || null
@@ -54,7 +54,7 @@ const lessonController = {
             const lessons = await Lesson.getAllByCourseId(course.id);
             const maxOrder = await Lesson.getMaxOrder(course.id);
 
-            res.render('lesson_create', { course, lessons, maxOrder, error: null, user: req.session.user });
+            res.render('lessons/lesson_create', { course, lessons, maxOrder, error: null, user: req.session.user });
         } catch (error) {
             console.error(error);
             res.redirect(`/courses/${req.params.slug}/lessons/dashboard`);
@@ -89,7 +89,7 @@ const lessonController = {
             const course = await Course.getBySlug(slug);
             const lessons = await Lesson.getAllByCourseId(course.id);
             const maxOrder = await Lesson.getMaxOrder(course.id);
-            res.render('lesson_create', { course, lessons, maxOrder, error: 'Đã có lỗi xảy ra', user: req.session.user });
+            res.render('lessons/lesson_create', { course, lessons, maxOrder, error: 'Đã có lỗi xảy ra', user: req.session.user });
         }
     },
 
@@ -106,7 +106,7 @@ const lessonController = {
 
             const lessons = await Lesson.getAllByCourseId(course.id);
             
-            res.render('lesson_edit', { course, lesson, lessons, error: null, user: req.session.user });
+            res.render('lessons/lesson_edit', { course, lesson, lessons, error: null, user: req.session.user });
         } catch (error) {
             console.error(error);
             res.redirect(`/courses/${req.params.slug}/lessons/dashboard`);
@@ -142,7 +142,7 @@ const lessonController = {
             const course = await Course.getBySlug(slug);
             const lesson = await Lesson.getById(id);
             const lessons = await Lesson.getAllByCourseId(course.id);
-            res.render('lesson_edit', { course, lesson, lessons, error: 'Đã có lỗi xảy ra', user: req.session.user });
+            res.render('lessons/lesson_edit', { course, lesson, lessons, error: 'Đã có lỗi xảy ra', user: req.session.user });
         }
     },
 
@@ -167,7 +167,7 @@ const lessonController = {
             if (!course) return res.redirect('/courses/dashboard');
 
             const lessons = await Lesson.getDeletedByCourseId(course.id);
-            res.render('lesson_rebin', { course, lessons, user: req.session.user });
+            res.render('lessons/lesson_rebin', { course, lessons, user: req.session.user });
         } catch (error) {
             console.error(error);
             res.redirect(`/courses/${req.params.slug}/lessons/dashboard`);

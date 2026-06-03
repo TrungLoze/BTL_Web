@@ -7,13 +7,7 @@ const lessonRouter = require('./lesson');
 // Cấu hình Multer để upload ảnh bìa vào thư mục public/images
 const upload = multer({ dest: 'public/images/' });
 
-// Middleware kiểm tra quyền Admin
-const isAdmin = (req, res, next) => {
-    if (req.session.user && req.session.user.role === 'admin') {
-        return next();
-    }
-    res.status(403).send('Bạn không có quyền truy cập trang này.');
-};
+const { isAdmin } = require('../middlewares/authMiddleware');
 
 // Route kết nối bài học
 router.use('/:slug/lessons', isAdmin, lessonRouter);

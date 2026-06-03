@@ -5,7 +5,8 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL, -- Sẽ dùng để lưu mật khẩu đã mã hóa (bcrypt)
     role ENUM('student', 'admin') DEFAULT 'student', -- Phân quyền người dùng
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
 );
 
 -- Quản lý khóa học
