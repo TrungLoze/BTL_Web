@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const courseController = require('../controllers/courseController');
 const multer = require('multer');
+const lessonRouter = require('./lesson');
 
 // Cấu hình Multer để upload ảnh bìa vào thư mục public/images
 const upload = multer({ dest: 'public/images/' });
@@ -13,6 +14,9 @@ const isAdmin = (req, res, next) => {
     }
     res.status(403).send('Bạn không có quyền truy cập trang này.');
 };
+
+// Route kết nối bài học
+router.use('/:slug/lessons', isAdmin, lessonRouter);
 
 // Route Dashboard Quản lý khóa học (Phải đặt TRƯỚC /:slug)
 router.get('/dashboard', isAdmin, courseController.getDashboard);

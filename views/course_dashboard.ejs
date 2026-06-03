@@ -21,7 +21,8 @@
                         <tr>
                             <th scope="col" class="text-center" style="width: 5%">STT</th>
                             <th scope="col" style="width: 25%">Tên khóa học</th>
-                            <th scope="col" style="width: 40%">Mô tả</th>
+                            <th scope="col" style="width: 30%">Mô tả</th>
+                            <th scope="col" class="text-center" style="width: 10%">Bài học</th>
                             <th scope="col" class="text-center" style="width: 15%">Sửa</th>
                             <th scope="col" class="text-center" style="width: 15%">Xóa</th>
                         </tr>
@@ -41,6 +42,11 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
+                                        <a href="/courses/<%= course.slug %>/lessons/dashboard" class="btn btn-sm btn-outline-success border-0 rounded-circle" title="Quản lý bài học">
+                                            <i class="bi bi-journal-text fs-5"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
                                         <a href="/courses/<%= course.slug %>/edit" class="btn btn-sm btn-outline-primary border-0 rounded-circle" title="Sửa">
                                             <i class="bi bi-pencil-square fs-5"></i>
                                         </a>
@@ -56,7 +62,7 @@
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="5" class="text-center py-5 text-muted">
+                                <td colspan="6" class="text-center py-5 text-muted">
                                     Chưa có khóa học nào. Hãy tạo khóa học đầu tiên!
                                 </td>
                             </tr>

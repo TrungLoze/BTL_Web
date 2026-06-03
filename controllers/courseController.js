@@ -1,4 +1,5 @@
 const Course = require('../models/Course');
+const Lesson = require('../models/Lesson');
 const fs = require('fs');
 const path = require('path');
 
@@ -25,9 +26,25 @@ const courseController = {
                 return res.redirect('/');
             }
 
-            // Ở đây tạm thời chưa có bài học (lessons), sau này bạn có thể query thêm lessons
+            let lessons = await Lesson.getAllByCourseId(course.id);
+            
+            // Xử lý link video để lấy dạng embed cho iframe
+            lessons = lessons.map(lesson => {
+                let embedUrl = lesson.video_url;
+                if (embedUrl.includes('youtube.com/watch?v=')) {
+                    embedUrl = embedUrl.replace('youtube.com/watch?v=', 'youtube.com/embed/');
+                    embedUrl = embedUrl.split('&')[0]; // bỏ các tham số phụ phía sau
+                } else if (embedUrl.includes('youtu.be/')) {
+                    embedUrl = embedUrl.replace('youtu.be/', 'youtube.com/embed/');
+                    embedUrl = embedUrl.split('?')[0];
+                }
+                lesson.embed_url = embedUrl;
+                return lesson;
+            });
+
             res.render('course_detail', { 
                 course: course,
+                lessons: lessons,
                 user: req.session.user || null 
             });
         } catch (error) {

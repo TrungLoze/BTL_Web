@@ -99,31 +99,22 @@
 
                     <!-- Danh sách bài học -->
                     <ul class="lesson-list list-unstyled mb-0">
-                        <!-- Tạm thời Hardcode bài học mẫu, sau này sẽ lặp từ CSDL -->
-                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
-                            data-video="https://www.youtube.com/embed/dQw4w9WgXcQ">
-                            <div class="lesson-index shadow-sm me-3 text-muted">1</div>
-                            <div>
-                                <h6 class="fw-bold mb-1 text-dark">Giới thiệu tổng quan</h6>
-                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 04:15</span>
+                        <% if (lessons && lessons.length > 0) { %>
+                            <% lessons.forEach((lesson, index) => { %>
+                                <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
+                                    data-video="<%= lesson.embed_url %>">
+                                    <div class="lesson-index shadow-sm me-3 text-muted"><%= index + 1 %></div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-dark"><%= lesson.title %></h6>
+                                        <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> <%= lesson.duration || '00:00' %></span>
+                                    </div>
+                                </li>
+                            <% }) %>
+                        <% } else { %>
+                            <div class="text-center text-muted py-4">
+                                Khóa học này chưa có bài học nào.
                             </div>
-                        </li>
-                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
-                            data-video="https://www.youtube.com/embed/3JZ_D3ELwOQ">
-                            <div class="lesson-index shadow-sm me-3 text-muted">2</div>
-                            <div>
-                                <h6 class="fw-bold mb-1 text-dark">Khởi tạo và thiết lập</h6>
-                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 06:20</span>
-                            </div>
-                        </li>
-                        <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
-                            data-video="https://www.youtube.com/embed/jNQXAC9IVRw">
-                            <div class="lesson-index shadow-sm me-3 text-muted">3</div>
-                            <div>
-                                <h6 class="fw-bold mb-1 text-dark">Hướng dẫn sử dụng cơ bản</h6>
-                                <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> 08:10</span>
-                            </div>
-                        </li>
+                        <% } %>
                     </ul>
                 </div>
             </div>

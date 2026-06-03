@@ -31,18 +31,18 @@
                                 Khóa học
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Quizzi</a></li>
-                                <li><a class="dropdown-item" href="#">Kahoot</a></li>
-                                <li><a class="dropdown-item" href="#">Google Classroom</a></li>
-                                <li><a class="dropdown-item" href="#">Articulate 360</a></li>
+                                <% if (globalCourses && globalCourses.length> 0) { %>
+                                    <% globalCourses.forEach(course=> { %>
+                                        <li><a class="dropdown-item" href="/courses/<%= course.slug %>">
+                                                <%= course.title %>
+                                            </a></li>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <li><a class="dropdown-item" href="#">Chưa có khóa học</a></li>
+                                                <% } %>
                             </ul>
                         </li>
                     </ul>
-                    <form class="d-flex me-3" role="search">
-                        <input class="form-control me-2" type="search"
-                            placeholder="Tìm kiếm môn học, tài liệu, video..." aria-label="Search" />
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
 
                     <div class="d-flex align-items-center">
                         <% if (locals.user) { %>
@@ -54,18 +54,23 @@
                                 <ul class="dropdown-menu dropdown-menu-end shadow">
                                     <li><a class="dropdown-item" href="#">Hồ sơ của tôi</a></li>
                                     <li><a class="dropdown-item" href="#">Khóa học của tôi</a></li>
-                                    <% if (user.role === 'admin') { %>
+                                    <% if (user.role==='admin' ) { %>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><h6 class="dropdown-header text-uppercase">Admin Panel</h6></li>
-                                        <li><a class="dropdown-item text-primary fw-bold" href="/courses/dashboard"><i class="bi bi-speedometer2 me-1"></i> Quản lý khóa học</a></li>
-                                        <li><a class="dropdown-item text-primary fw-bold" href="/courses/create"><i class="bi bi-plus-circle me-1"></i> Tạo khóa học mới</a></li>
-                                    <% } %>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item text-danger" href="/auth/logout">Đăng xuất</a></li>
+                                        <li>
+                                            <h6 class="dropdown-header text-uppercase">Admin Panel</h6>
+                                        </li>
+                                        <li><a class="dropdown-item text-primary fw-bold" href="/courses/dashboard"><i
+                                                    class="bi bi-speedometer2 me-1"></i> Quản lý khóa học</a></li>
+                                        <li><a class="dropdown-item text-primary fw-bold" href="/courses/create"><i
+                                                    class="bi bi-plus-circle me-1"></i> Tạo khóa học mới</a></li>
+                                        <% } %>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item text-danger" href="/auth/logout">Đăng xuất</a>
+                                            </li>
                                 </ul>
                             </div>
                             <% } else { %>

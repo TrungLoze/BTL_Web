@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const { connectDB } = require('./config/db'); // Import kết nối database
+const Course = require('./models/Course');
 const port = process.env.PORT;
 const app = express();
 
@@ -23,8 +24,13 @@ app.use(session({
 }));
 
 // Middleware toàn cục để truyền biến user vào mọi view EJS
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     res.locals.user = req.session.user || null;
+    try {
+        res.locals.globalCourses = await Course.getAll();
+    } catch (error) {
+        res.locals.globalCourses = [];
+    }
     next();
 });
 
