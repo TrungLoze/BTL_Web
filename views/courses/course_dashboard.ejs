@@ -22,6 +22,7 @@
                             <th scope="col" class="text-center" style="width: 5%">STT</th>
                             <th scope="col" style="width: 25%">Tên khóa học</th>
                             <th scope="col" style="width: 30%">Mô tả</th>
+                            <th scope="col" class="text-center" style="width: 10%">Học viên</th>
                             <th scope="col" class="text-center" style="width: 10%">Bài học</th>
                             <th scope="col" class="text-center" style="width: 15%">Sửa</th>
                             <th scope="col" class="text-center" style="width: 15%">Xóa</th>
@@ -40,6 +41,63 @@
                                         <div class="text-truncate" style="max-width: 300px;" title="<%= course.description %>">
                                             <%= course.description || 'Chưa có mô tả' %>
                                         </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <% if (course.enrollments && course.enrollments.length > 0) { %>
+                                            <button class="btn btn-sm btn-outline-info rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#courseUsersModal<%= course.id %>">
+                                                <i class="bi bi-people-fill me-1"></i> <%= course.enrollments.length %> HV
+                                            </button>
+                                            
+                                            <!-- Modal Danh sách Học viên -->
+                                            <div class="modal fade" id="courseUsersModal<%= course.id %>" tabindex="-1" aria-labelledby="courseUsersModalLabel<%= course.id %>" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content border-0 shadow text-start">
+                                                        <div class="modal-header bg-light">
+                                                            <h5 class="modal-title fw-bold text-dark" id="courseUsersModalLabel<%= course.id %>"><i class="bi bi-people-fill text-info me-2"></i> Học viên: <%= course.title %></h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body p-0">
+                                                            <div class="list-group list-group-flush">
+                                                                <% course.enrollments.forEach(userItem => { %>
+                                                                    <% const progress = userItem.total_lessons > 0 ? Math.round((userItem.completed_lessons / userItem.total_lessons) * 100) : 0; %>
+                                                                    <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
+                                                                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                                                                            <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                                                <i class="bi bi-person-fill fs-3"></i>
+                                                                            </div>
+                                                                            <div>
+                                                                                <h6 class="mb-1 fw-bold text-dark"><%= userItem.full_name %></h6>
+                                                                                <small class="text-muted"><i class="bi bi-envelope me-1"></i> <%= userItem.email %></small>
+                                                                                <br>
+                                                                                <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> Tham gia: <%= new Date(userItem.enrolled_at).toLocaleDateString('vi-VN') %></small>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-end" style="min-width: 200px;">
+                                                                            <div class="d-flex justify-content-between mb-1">
+                                                                                <small class="fw-bold text-muted">Tiến độ (<%= userItem.completed_lessons %>/<%= userItem.total_lessons %>)</small>
+                                                                                <small class="text-<%= progress === 100 ? 'success' : 'info' %> fw-bold"><%= progress %>%</small>
+                                                                            </div>
+                                                                            <div class="progress" style="height: 10px; border-radius: 10px;">
+                                                                                <div class="progress-bar <%= progress === 100 ? 'bg-success' : 'bg-info progress-bar-striped progress-bar-animated' %>" role="progressbar" aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                            </div>
+                                                                            <% if (progress === 100) { %>
+                                                                                <div class="mt-2 text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Đã hoàn thành</div>
+                                                                            <% } else if (progress > 0) { %>
+                                                                                <div class="mt-2 text-info small fw-bold"><i class="bi bi-arrow-clockwise me-1"></i> Đang học</div>
+                                                                            <% } else { %>
+                                                                                <div class="mt-2 text-muted small fw-bold"><i class="bi bi-dash-circle me-1"></i> Chưa bắt đầu</div>
+                                                                            <% } %>
+                                                                        </div>
+                                                                    </div>
+                                                                <% }) %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <span class="text-muted small">0 HV</span>
+                                        <% } %>
                                     </td>
                                     <td class="text-center">
                                         <a href="/courses/<%= course.slug %>/lessons/dashboard" class="btn btn-sm btn-outline-success border-0 rounded-circle" title="Quản lý bài học">
@@ -103,5 +161,15 @@
         document.getElementById('deleteCourseForm').action = actionUrl;
         document.getElementById('deleteCourseName').innerText = courseTitle;
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(bar => {
+            const val = bar.getAttribute('aria-valuenow');
+            if (val !== null) {
+                bar.style.width = val + '%';
+            }
+        });
+    });
 </script>
 <%- include('../layouts/footer') %>

@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const Enrollment = require('../models/Enrollment');
 
 const profileController = {
     // Hiển thị trang Hồ sơ của tôi
@@ -70,6 +71,21 @@ const profileController = {
         } catch (error) {
             console.error(error);
             res.redirect('/profile?error=change_password_failed');
+        }
+    },
+
+    // Hiển thị Khóa học của tôi
+    async getMyCourses(req, res) {
+        try {
+            const userId = req.session.user.id;
+            const myCourses = await Enrollment.getUserEnrollments(userId);
+            res.render('users/my_courses', {
+                myCourses,
+                user: req.session.user
+            });
+        } catch (error) {
+            console.error('Lỗi khi tải khóa học của tôi:', error);
+            res.redirect('/profile');
         }
     }
 };

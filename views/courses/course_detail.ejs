@@ -56,16 +56,35 @@
                             </li>
                         </ul>
 
-                        <button id="btn-start-course"
-                            class="btn btn-start-course px-4 py-3 rounded-pill fw-bold fs-5 w-100 w-md-auto">
-                            <i class="bi bi-play-circle-fill me-2"></i> Bắt đầu ngay khóa học
-                        </button>
+                        <% if (user) { %>
+                            <% if (isEnrolled) { %>
+                                <div class="mt-4">
+                                    <h6 class="fw-bold mb-2">Tiến độ học tập (<%= completedLessonsCount %>/<%= lessons.length %> bài)</h6>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" id="course-progress-bar" role="progressbar" aria-valuenow="<%= progressPercent %>" aria-valuemin="0" aria-valuemax="100"><%= progressPercent %>%</div>
+                                    </div>
+                                </div>
+                                <button id="btn-start-course" class="btn btn-start-course px-4 py-3 rounded-pill fw-bold fs-5 w-100 w-md-auto mt-4">
+                                    <i class="bi bi-play-circle-fill me-2"></i> Tiếp tục học
+                                </button>
+                            <% } else { %>
+                                <form action="/courses/<%= course.slug %>/enroll" method="POST" class="mt-4">
+                                    <button type="submit" class="btn btn-start-course px-4 py-3 rounded-pill fw-bold fs-5 w-100 w-md-auto">
+                                        <i class="bi bi-person-plus-fill me-2"></i> Đăng ký khóa học
+                                    </button>
+                                </form>
+                            <% } %>
+                        <% } else { %>
+                            <a href="/auth/login" class="btn btn-start-course px-4 py-3 rounded-pill fw-bold fs-5 w-100 w-md-auto mt-4 text-decoration-none text-center">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập để đăng ký
+                            </a>
+                        <% } %>
                     </div>
                 </div>
 
                 <!-- 2. VIDEO PLAYER (Hiển thị khi bấm bài học) -->
                 <div id="video-content" class="card border-0 shadow-sm rounded-4 overflow-hidden"
-                    style="display: none;">
+                    style="display: none;" data-enrolled="<%= typeof isEnrolled !== 'undefined' ? isEnrolled : 'false' %>" data-slug="<%= course.slug %>">
                     <!-- Trình phát video (Tỉ lệ 16:9 Bootstrap) -->
                     <div class="ratio ratio-16x9 video-player-wrapper bg-dark">
                         <iframe id="main-video-player" src=""
@@ -78,12 +97,11 @@
                         class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                         <h4 id="now-playing-title" class="fw-bold mb-0 text-dark">Đang phát: Tên bài học</h4>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-light border fw-bold text-secondary">
-                                <i class="bi bi-journal-text me-1"></i> Làm bài tập
+                            <button id="btn-complete-lesson" class="btn btn-light border fw-bold text-secondary" style="display: none;">
+                                <i class="bi bi-check-circle me-1"></i> Đánh dấu hoàn thành
                             </button>
-                            <button
-                                class="btn btn-danger bg-opacity-10 text-danger border-danger border-opacity-25 fw-bold">
-                                Bài tiếp <i class="bi bi-skip-forward-fill ms-1"></i>
+                            <button id="btn-next-lesson" class="btn btn-primary px-4 py-2 fw-bold text-white shadow rounded-pill" style="display: none; transition: transform 0.2s;">
+                                Chuyển bài tiếp theo <i class="bi bi-arrow-right-circle-fill ms-2 fs-5 align-middle"></i>
                             </button>
                         </div>
                     </div>
@@ -101,9 +119,12 @@
                     <ul class="lesson-list list-unstyled mb-0">
                         <% if (lessons && lessons.length > 0) { %>
                             <% lessons.forEach((lesson, index) => { %>
+                                <% const isCompleted = (typeof completedLessonIds !== 'undefined' && completedLessonIds.includes(lesson.id)); %>
                                 <li class="lesson-item bg-white border rounded-3 p-3 mb-3 d-flex align-items-center"
-                                    data-video="<%= lesson.embed_url %>">
-                                    <div class="lesson-index shadow-sm me-3 text-muted"><%= index + 1 %></div>
+                                    data-video="<%= lesson.embed_url %>" data-id="<%= lesson.id %>" data-completed="<%= isCompleted ? 'true' : 'false' %>">
+                                    <div class="lesson-index shadow-sm me-3 <%= isCompleted ? 'bg-success text-white' : 'text-muted' %>">
+                                        <% if (isCompleted) { %><i class="bi bi-check"></i><% } else { %><%= index + 1 %><% } %>
+                                    </div>
                                     <div>
                                         <h6 class="fw-bold mb-1 text-dark"><%= lesson.title %></h6>
                                         <span class="lesson-time"><i class="bi bi-play-circle me-1"></i> <%= lesson.duration || '00:00' %></span>
@@ -149,6 +170,42 @@
                 const lessonTitle = lessonElement.querySelector('h6').innerText;
                 nowPlayingTitle.innerText = `Đang phát: ${lessonTitle}`;
 
+                // Xử lý nút hoàn thành & bài tiếp
+                const isEnrolled = videoContent.getAttribute('data-enrolled') === 'true';
+                const isCompleted = lessonElement.getAttribute('data-completed') === 'true';
+                const lessonId = lessonElement.getAttribute('data-id');
+                
+                const btnComplete = document.getElementById('btn-complete-lesson');
+                const btnNext = document.getElementById('btn-next-lesson');
+
+                if (isEnrolled && btnComplete) {
+                    btnComplete.style.display = 'inline-block';
+                    btnComplete.setAttribute('data-lesson-id', lessonId);
+                    if (isCompleted) {
+                        btnComplete.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Đã hoàn thành';
+                        btnComplete.className = 'btn btn-success text-white fw-bold';
+                        btnComplete.disabled = true;
+                    } else {
+                        btnComplete.innerHTML = '<i class="bi bi-check-circle me-1"></i> Đánh dấu hoàn thành';
+                        btnComplete.className = 'btn btn-light border fw-bold text-secondary';
+                        btnComplete.disabled = false;
+                    }
+                } else if (btnComplete) {
+                    btnComplete.style.display = 'none';
+                }
+
+                const nextLesson = lessonElement.nextElementSibling;
+                if (btnNext) {
+                    if (nextLesson) {
+                        btnNext.style.display = 'inline-block';
+                        btnNext.onclick = function() {
+                            nextLesson.click();
+                        };
+                    } else {
+                        btnNext.style.display = 'none';
+                    }
+                }
+
                 // Cuộn màn hình đến video trên mobile
                 if (window.innerWidth < 992) {
                     videoContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -156,13 +213,15 @@
             }
 
             // Bắt đầu khóa học -> mở bài đầu tiên
-            btnStart.addEventListener('click', function () {
-                if (lessonItems.length > 0) {
-                    const firstLesson = lessonItems[0];
-                    const videoUrl = firstLesson.getAttribute('data-video');
-                    playVideo(videoUrl, firstLesson);
-                }
-            });
+            if (btnStart) {
+                btnStart.addEventListener('click', function () {
+                    if (lessonItems.length > 0) {
+                        const firstLesson = lessonItems[0];
+                        const videoUrl = firstLesson.getAttribute('data-video');
+                        playVideo(videoUrl, firstLesson);
+                    }
+                });
+            }
 
             // Click vào từng bài học
             lessonItems.forEach(item => {
@@ -171,6 +230,53 @@
                     playVideo(videoUrl, this);
                 });
             });
+
+            // Xử lý nút đánh dấu hoàn thành
+            const btnComplete = document.getElementById('btn-complete-lesson');
+            if (btnComplete) {
+                btnComplete.addEventListener('click', async function() {
+                    const lessonId = this.getAttribute('data-lesson-id');
+                    const slug = videoContent.getAttribute('data-slug');
+                    
+                    try {
+                        const response = await fetch(`/courses/${slug}/lessons/${lessonId}/complete`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        
+                        const result = await response.json();
+                        if (result.success) {
+                            // Cập nhật UI
+                            const activeLesson = document.querySelector('.lesson-item.active');
+                            if (activeLesson) {
+                                activeLesson.setAttribute('data-completed', 'true');
+                                const indexBadge = activeLesson.querySelector('.lesson-index');
+                                indexBadge.className = 'lesson-index shadow-sm me-3 bg-success text-white';
+                                indexBadge.innerHTML = '<i class="bi bi-check"></i>';
+                                
+                                // Đổi trạng thái nút
+                                this.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Đã hoàn thành';
+                                this.className = 'btn btn-success text-white fw-bold';
+                                this.disabled = true;
+                                
+                                // Reload trang nếu muốn cập nhật thanh tiến độ nhanh (hoặc có thể viết JS update % ở client)
+                                // window.location.reload(); 
+                            }
+                        } else {
+                            alert(result.message || 'Có lỗi xảy ra khi hoàn thành bài học');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('Đã có lỗi xảy ra');
+                    }
+                });
+            }
+
+            // Gán chiều rộng cho thanh tiến độ dựa trên thuộc tính aria-valuenow để tránh lỗi CSS linter trong file EJS
+            const progressBar = document.getElementById('course-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = progressBar.getAttribute('aria-valuenow') + '%';
+            }
         });
     </script>
 

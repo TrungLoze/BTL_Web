@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Lesson = require('../models/Lesson');
+const Enrollment = require('../models/Enrollment');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,6 +9,12 @@ const courseController = {
     async getDashboard(req, res) {
         try {
             const courses = await Course.getAll();
+            
+            // Lấy danh sách học viên và tiến độ cho từng khóa học
+            for (let course of courses) {
+                course.enrollments = await Enrollment.getCourseEnrollments(course.id);
+            }
+            
             res.render('courses/course_dashboard', { courses });
         } catch (error) {
             console.error(error);
@@ -42,10 +49,29 @@ const courseController = {
                 return lesson;
             });
 
+            // Xử lý kiểm tra người dùng đã đăng ký khóa học chưa
+            let isEnrolled = false;
+            let completedLessonsCount = 0;
+            let progressPercent = 0;
+            let completedLessonIds = [];
+            if (req.session.user) {
+                const enrollment = await Enrollment.checkEnrollment(req.session.user.id, course.id);
+                if (enrollment) {
+                    isEnrolled = true;
+                    completedLessonsCount = await Enrollment.getCompletedLessonsCount(req.session.user.id, course.id);
+                    progressPercent = lessons.length > 0 ? Math.round((completedLessonsCount / lessons.length) * 100) : 0;
+                    completedLessonIds = await Enrollment.getCompletedLessonIds(req.session.user.id, course.id);
+                }
+            }
+
             res.render('courses/course_detail', { 
                 course: course,
                 lessons: lessons,
-                user: req.session.user || null 
+                user: req.session.user || null,
+                isEnrolled: isEnrolled,
+                completedLessonsCount: completedLessonsCount,
+                progressPercent: progressPercent,
+                completedLessonIds: completedLessonIds
             });
         } catch (error) {
             console.error(error);
@@ -203,6 +229,47 @@ const courseController = {
         } catch (error) {
             console.error(error);
             res.redirect('/courses/dashboard/rebin');
+        }
+    },
+
+    // Xử lý đăng ký khóa học
+    async postEnrollCourse(req, res) {
+        try {
+            const slug = req.params.slug;
+            const course = await Course.getBySlug(slug);
+            if (!course) {
+                return res.redirect('/');
+            }
+            if (!req.session.user) {
+                return res.redirect('/auth/login');
+            }
+            const userId = req.session.user.id;
+            
+            // Kiểm tra xem đã đăng ký chưa
+            const existingEnrollment = await Enrollment.checkEnrollment(userId, course.id);
+            if (!existingEnrollment) {
+                await Enrollment.enroll(userId, course.id);
+            }
+            res.redirect(`/courses/${slug}`);
+        } catch (error) {
+            console.error(error);
+            res.redirect('/');
+        }
+    },
+
+    // API: Đánh dấu hoàn thành bài học
+    async postCompleteLesson(req, res) {
+        try {
+            if (!req.session.user) {
+                return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập' });
+            }
+            const lessonId = req.params.lessonId;
+            const userId = req.session.user.id;
+            await Enrollment.markLessonCompleted(userId, lessonId);
+            res.json({ success: true });
+        } catch (error) {
+            console.error('Lỗi khi hoàn thành bài học:', error);
+            res.status(500).json({ success: false });
         }
     }
 };

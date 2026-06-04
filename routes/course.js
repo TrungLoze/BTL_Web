@@ -7,9 +7,12 @@ const lessonRouter = require('./lesson');
 // Cấu hình Multer để upload ảnh bìa vào thư mục public/images
 const upload = multer({ dest: 'public/images/' });
 
-const { isAdmin } = require('../middlewares/authMiddleware');
+const { isAdmin, isLoggedIn } = require('../middlewares/authMiddleware');
 
-// Route kết nối bài học
+// Route hoàn thành bài học (Phải đặt trước route kết nối lessonRouter vì lessonRouter yêu cầu quyền admin)
+router.post('/:slug/lessons/:lessonId/complete', isLoggedIn, courseController.postCompleteLesson);
+
+// Route kết nối bài học (yêu cầu quyền Admin)
 router.use('/:slug/lessons', isAdmin, lessonRouter);
 
 // Route Dashboard Quản lý khóa học (Phải đặt TRƯỚC /:slug)
@@ -35,5 +38,8 @@ router.post('/:slug/force-delete', isAdmin, courseController.postForceDeleteCour
 
 // Route hiển thị chi tiết khóa học theo slug
 router.get('/:slug', courseController.getCourseDetail);
+
+// Route đăng ký khóa học
+router.post('/:slug/enroll', isLoggedIn, courseController.postEnrollCourse);
 
 module.exports = router;
