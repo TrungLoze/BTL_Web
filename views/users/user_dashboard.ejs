@@ -23,8 +23,7 @@
                             <th scope="col">Họ và tên</th>
                             <th scope="col">Email</th>
                             <th scope="col">Vai trò</th>
-                            <th scope="col" class="sortable" onclick="sortTable(4, 'number')" title="Sắp xếp theo số khóa học">Khóa học <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8rem;"></i></th>
-                            <th scope="col" class="sortable" onclick="sortTable(5, 'number')" title="Sắp xếp theo ngày tham gia">Ngày tham gia <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8rem;"></i></th>
+                            <th scope="col" class="sortable" onclick="sortTable(4, 'number')" title="Sắp xếp theo ngày tham gia">Ngày tham gia <i class="bi bi-arrow-down-up text-muted ms-1" style="font-size: 0.8rem;"></i></th>
                             <th scope="col" class="text-end pe-4">Hành động</th>
                         </tr>
                     </thead>
@@ -44,59 +43,6 @@
                                             <span class="badge bg-danger rounded-pill px-3 py-2"><i class="bi bi-shield-lock-fill me-1"></i> Admin</span>
                                         <% } else { %>
                                             <span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="bi bi-person-fill me-1"></i> Học viên</span>
-                                        <% } %>
-                                    </td>
-                                    <td data-value="<%= userItem.enrollments ? userItem.enrollments.length : 0 %>">
-                                        <% if (userItem.enrollments && userItem.enrollments.length > 0) { %>
-                                            <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#userCoursesModal<%= userItem.id %>">
-                                                <i class="bi bi-journal-bookmark me-1"></i> <%= userItem.enrollments.length %> khóa học
-                                            </button>
-                                            
-                                            <!-- Modal Danh sách khóa học -->
-                                            <div class="modal fade" id="userCoursesModal<%= userItem.id %>" tabindex="-1" aria-labelledby="userCoursesModalLabel<%= userItem.id %>" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                    <div class="modal-content border-0 shadow">
-                                                        <div class="modal-header bg-light">
-                                                            <h5 class="modal-title fw-bold text-dark" id="userCoursesModalLabel<%= userItem.id %>"><i class="bi bi-book-half text-primary me-2"></i> Tiến độ học tập của <%= userItem.full_name %></h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body p-0">
-                                                            <div class="list-group list-group-flush">
-                                                                <% userItem.enrollments.forEach(course => { %>
-                                                                    <% const progress = course.total_lessons > 0 ? Math.round((course.completed_lessons / course.total_lessons) * 100) : 0; %>
-                                                                    <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-md-center p-4">
-                                                                        <div class="d-flex align-items-center mb-3 mb-md-0">
-                                                                            <img src="<%= course.cover_image %>" class="rounded-3 shadow-sm me-3" style="width: 80px; height: 60px; object-fit: cover;">
-                                                                            <div>
-                                                                                <h6 class="mb-1 fw-bold text-dark"><%= course.title %></h6>
-                                                                                <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> Đăng ký: <%= new Date(course.enrolled_at).toLocaleDateString('vi-VN') %></small>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="text-end" style="min-width: 200px;">
-                                                                            <div class="d-flex justify-content-between mb-1">
-                                                                                <small class="fw-bold text-muted">Tiến độ (<%= course.completed_lessons %>/<%= course.total_lessons %>)</small>
-                                                                                <small class="text-<%= progress === 100 ? 'success' : 'primary' %> fw-bold"><%= progress %>%</small>
-                                                                            </div>
-                                                                            <div class="progress" style="height: 10px; border-radius: 10px;">
-                                                                                <div class="progress-bar <%= progress === 100 ? 'bg-success' : 'bg-primary progress-bar-striped progress-bar-animated' %>" role="progressbar" aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                            </div>
-                                                                            <% if (progress === 100) { %>
-                                                                                <div class="mt-2 text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Đã hoàn thành</div>
-                                                                            <% } else if (progress > 0) { %>
-                                                                                <div class="mt-2 text-primary small fw-bold"><i class="bi bi-arrow-clockwise me-1"></i> Đang học</div>
-                                                                            <% } else { %>
-                                                                                <div class="mt-2 text-muted small fw-bold"><i class="bi bi-dash-circle me-1"></i> Chưa bắt đầu</div>
-                                                                            <% } %>
-                                                                        </div>
-                                                                    </div>
-                                                                <% }) %>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% } else { %>
-                                            <span class="text-muted small"><i class="bi bi-dash"></i> 0 khóa học</span>
                                         <% } %>
                                     </td>
                                     <td data-value="<%= new Date(userItem.created_at).getTime() %>">
@@ -148,7 +94,7 @@
     });
 
     // Tính năng sắp xếp bảng
-    let sortDirections = [true, true, true, true, true, true]; // true = tăng dần, false = giảm dần
+    let sortDirections = [true, true, true, true, true]; // true = tăng dần, false = giảm dần
     function sortTable(colIndex, type) {
         const table = document.querySelector(".table tbody");
         const rows = Array.from(table.querySelectorAll("tr"));

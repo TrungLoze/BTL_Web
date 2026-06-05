@@ -5,12 +5,6 @@ const userController = {
     async getDashboard(req, res) {
         try {
             const users = await User.getAll();
-            const Enrollment = require('../models/Enrollment');
-            
-            // Lấy tiến độ khóa học cho từng người dùng
-            for (let user of users) {
-                user.enrollments = await Enrollment.getUserEnrollments(user.id);
-            }
             
             res.render('users/user_dashboard', { users });
         } catch (error) {

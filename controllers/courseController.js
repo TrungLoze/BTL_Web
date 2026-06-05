@@ -10,11 +10,6 @@ const courseController = {
         try {
             const courses = await Course.getAll();
             
-            // Lấy danh sách học viên và tiến độ cho từng khóa học
-            for (let course of courses) {
-                course.enrollments = await Enrollment.getCourseEnrollments(course.id);
-            }
-            
             res.render('courses/course_dashboard', { courses });
         } catch (error) {
             console.error(error);
