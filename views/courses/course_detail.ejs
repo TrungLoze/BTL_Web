@@ -1,5 +1,6 @@
 <%- include('../layouts/header') %>
     <link rel="stylesheet" href="/css/course_detail.css">
+    
           <!-- Check người dùng đã đăng nhập chưa,phải đăng nhập rồi thì mới xem bài học được -->
      <div id="auth-check" data-logged-in="<%= typeof user !== 'undefined' && user ? 'true' : 'false' %>"></div>
 
@@ -144,6 +145,19 @@
             </div>
         </div>
     </div>
+     
+    <!-- Hiển thị thông báo đăng nhập để bắt đầu bài học -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="loginToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-danger text-white">
+      <strong class="me-auto">Thông báo</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Vui lòng <a href="/auth/login" class="text-danger fw-bold">đăng nhập</a> để bắt đầu học nhé!
+    </div>
+  </div>
+</div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -226,23 +240,26 @@
                 });
             }
 
+            
             // Click vào từng bài học
             lessonItems.forEach(item => {
-              item.addEventListener('click', function () {
-                 // 1. Kiểm tra đăng nhập
-                     const isLoggedIn = document.getElementById('auth-check').getAttribute('data-logged-in') === 'true';
+                item.addEventListener('click', function () {
+                    const isLoggedIn = document.getElementById('auth-check').getAttribute('data-logged-in') === 'true';
         
-                  if (!isLoggedIn) {
-                     // Nếu chưa đăng nhập, chuyển hướng đến trang login
-                     window.location.href = '/auth/login'; 
-                    return; // Dừng hàm lại
-                 }
+                    if (!isLoggedIn) {
+                        // 1. Lấy phần tử Toast
+                        const toastEl = document.getElementById('loginToast');
+                        // 2. Khởi tạo và hiển thị Toast (Bootstrap 5)
+                        const toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+                        return; // Dừng lại, không phát video
+                    }
 
-                 // 2. Nếu đã đăng nhập, mới cho phép xem
-                     const videoUrl = this.getAttribute('data-video');
-                     playVideo(videoUrl, this);
+                    // Nếu đã đăng nhập, mới cho phép xem
+                    const videoUrl = this.getAttribute('data-video');
+                    playVideo(videoUrl, this);
                 });
-                   });
+            });
 
             // Xử lý nút đánh dấu hoàn thành
             const btnComplete = document.getElementById('btn-complete-lesson');

@@ -46,7 +46,7 @@ CREATE TABLE enrollments (
     FOREIGN KEY (last_accessed_lesson_id) REFERENCES lessons(id) ON DELETE SET NULL
 );
 
--- Quản lý học sinh đã hoàn thành được khóa nào
+-- Quản lý học sinh đã hoàn thành được bài học nào
 CREATE TABLE lesson_completions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
