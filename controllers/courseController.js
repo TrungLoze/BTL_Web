@@ -4,7 +4,25 @@ const Enrollment = require('../models/Enrollment');
 const fs = require('fs');
 const path = require('path');
 
+
+
+
 const courseController = {
+    // Hiển thị danh sách khóa học nổi bật
+    async getCourseList(req, res) {
+        try {
+            const courses = await Course.getAll();
+
+            res.render('courses/course_list', {
+                courses: courses
+            });
+        } catch (error) {
+            console.error(error);
+            res.redirect('/');
+        }
+    },
+
+    
     // Hiển thị Dashboard quản lý khóa học (Admin)
     async getDashboard(req, res) {
         try {

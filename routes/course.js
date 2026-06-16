@@ -9,21 +9,21 @@ const upload = multer({ dest: 'public/images/' });
 
 const { isAdmin, isLoggedIn } = require('../middlewares/authMiddleware');
 
-// Route hoàn thành bài học (Phải đặt trước route kết nối lessonRouter vì lessonRouter yêu cầu quyền admin)
+// Route hoàn thành bài học
 router.post('/:slug/lessons/:lessonId/complete', isLoggedIn, courseController.postCompleteLesson);
 
-// Route kết nối bài học (yêu cầu quyền Admin)
+// Route kết nối bài học
 router.use('/:slug/lessons', isAdmin, lessonRouter);
 
-// Route Dashboard Quản lý khóa học (Phải đặt TRƯỚC /:slug)
+// Route Dashboard Quản lý khóa học
 router.get('/dashboard', isAdmin, courseController.getDashboard);
 router.get('/dashboard/rebin', isAdmin, courseController.getRebin);
 
-// Route hiển thị form tạo khóa học (Phải đặt TRƯỚC /:slug)
+// Route hiển thị form tạo khóa học
 router.get('/create', isAdmin, courseController.getCreateCourse);
 router.post('/create', isAdmin, upload.single('cover_file'), courseController.postCreateCourse);
 
-// Route sửa khóa học (Phải đặt TRƯỚC /:slug)
+// Route sửa khóa học
 router.get('/:slug/edit', isAdmin, courseController.getEditCourse);
 router.post('/:slug/edit', isAdmin, upload.single('cover_file'), courseController.postEditCourse);
 
@@ -35,6 +35,9 @@ router.post('/:slug/restore', isAdmin, courseController.postRestoreCourse);
 
 // Route xóa vĩnh viễn khóa học
 router.post('/:slug/force-delete', isAdmin, courseController.postForceDeleteCourse);
+
+// Route trang danh sách khóa học nổi bật
+router.get('/', courseController.getCourseList);
 
 // Route hiển thị chi tiết khóa học theo slug
 router.get('/:slug', courseController.getCourseDetail);

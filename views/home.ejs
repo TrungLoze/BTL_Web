@@ -1,43 +1,49 @@
 <%- include('layouts/header') %>
-    <link rel="stylesheet" href="/css/home.css">
-    <div class="container flex-grow-1 py-4 d-flex flex-column gap-4 overflow-auto">
-        <section class="hero-banner p-5 rounded-4 text-white flex-shrink-0">
-            <div class="hero-badge d-inline-block px-3 py-2 rounded-pill mb-4 border border-light border-opacity-25">⚡ Gia nhập hơn 1 triệu học sinh trên toàn quốc</div>
-            <h1 class="hero-title display-4 fw-bold mb-4">Box-Fed <br><span class="text-danger">HUST.</span></h1>
-            <p class="hero-desc text-light mb-4">Hệ thống các khóa học trực tuyến sử dụng công cụ đặc biệt dành riêng cho sinh viên
-                ngành công nghệ giáo dục</p>
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn-discover btn btn-danger px-4 py-2 fw-bold">KHÁM PHÁ KHÓA HỌC &rarr;</button>
-                <button class="btn-play btn btn-outline-light rounded-circle d-flex justify-content-center align-items-center">▶</button>
-            </div>
-        </section>
 
-        <h2 class="mt-2 fw-bold">Khóa học nổi bật</h2>
+<div class="container py-4">
 
-        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
-            <% if (courses && courses.length > 0) { %>
-                <% courses.forEach(course => { %>
-                    <div class="col">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
-                            <img src="<%= course.cover_image || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop' %>"
-                                class="card-img-top" alt="<%= course.title %>" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold"><%= course.title %></h5>
-                                <p class="card-text text-muted"><%= course.description || 'Chưa có mô tả cho khóa học này.' %></p>
-                            </div>
-                            <div class="card-footer bg-white border-0 pb-4 pt-0">
-                                <a href="/courses/<%= course.slug %>" class="btn btn-outline-danger w-100 fw-bold rounded-pill">Bắt đầu học ngay</a>
-                            </div>
-                        </div>
+    <section class="position-relative overflow-hidden rounded-5 shadow-lg text-white d-flex align-items-center"
+        style="height: calc(100vh - 125px); background: linear-gradient(135deg, #820d35 0%, #111827 55%, #27256d 100%);">
+
+        <div class="container px-4 px-lg-5">
+
+            <div class="row">
+                <div class="col-lg-8 col-xl-7">
+
+                    <div class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill border border-light border-opacity-25 bg-white bg-opacity-10 mb-4">
+                        <span>⚡</span>
+                        <span class="small fw-semibold">
+                            Gia nhập hơn 1 triệu học sinh trên toàn quốc
+                        </span>
                     </div>
-                <% }) %>
-            <% } else { %>
-                <div class="col-12">
-                    <div class="alert alert-secondary text-center" role="alert">
-                        Hiện tại chưa có khóa học nào. Vui lòng quay lại sau!
+
+                    <h1 class="display-1 fw-bold mb-4 lh-1">
+                        Box-Fed <br>
+                        <span class="text-danger">HUST.</span>
+                    </h1>
+
+                    <p class="fs-4 text-white mb-5" style="max-width: 720px;">
+                        Hệ thống E-learing khóa học sử dụng công cụ đặc biệt dành riêng cho sinh viên
+                        ngành công nghệ giáo dục
+                    </p>
+
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+
+                        <a href="/courses" class="btn btn-danger btn-lg px-5 py-3 fw-bold rounded-4 shadow">
+                            KHÁM PHÁ KHÓA HỌC &rarr;
+                        </a>
+
+                    
+
                     </div>
+
                 </div>
-            <% } %>
+            </div>
+
         </div>
-    </div>
-    <%- include('layouts/footer') %>
+
+    </section>
+
+</div>
+
+<%- include('layouts/footer') %>

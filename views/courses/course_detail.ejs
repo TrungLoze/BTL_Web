@@ -9,9 +9,9 @@
         <!-- Breadcrumb / Nút quay lại -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-danger fw-bold">Trang chủ</a>
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Trang chủ</a>
                 </li>
-                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Khóa học</a></li>
+                <li class="breadcrumb-item"><a href="/courses" class="text-decoration-none text-muted">Khóa học</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     <%= course.title %>
                 </li>
@@ -187,7 +187,7 @@
                 const lessonTitle = lessonElement.querySelector('h6').innerText;
                 nowPlayingTitle.innerText = `Đang phát: ${lessonTitle}`;
 
-                // Xử lý nút hoàn thành & bài tiếp
+                // Check trạng thái bài học để hiện nút 
                 const isEnrolled = videoContent.getAttribute('data-enrolled') === 'true';
                 const isCompleted = lessonElement.getAttribute('data-completed') === 'true';
                 const lessonId = lessonElement.getAttribute('data-id');
