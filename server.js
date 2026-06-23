@@ -26,11 +26,6 @@ app.use(session({
 // Middleware toàn cục để truyền biến user vào mọi view EJS
 app.use(async (req, res, next) => {
     res.locals.user = req.session.user || null;
-    try {
-        res.locals.globalCourses = await Course.getAll();
-    } catch (error) {
-        res.locals.globalCourses = [];
-    }
     next();
 });
 
